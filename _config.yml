@@ -7,7 +7,7 @@
 # https://learnxinyminutes.com/docs/yaml/
 
 title: Lewis Tunstall's Blog
-description: Posts on machine learning and phyiscs at irregularly spaced intervals.
+description: Posts on machine learning and physics at irregularly spaced intervals.
 github_username: lewtun
 # you can comment the below line out if your repo name is not different than your baseurl
 github_repo: "blog"
