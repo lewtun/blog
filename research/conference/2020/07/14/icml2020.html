@@ -330,7 +330,8 @@ $$ V_i' = \frac{\sum_j \mathrm{sim}(Q_i, K_j)V_j}{\sum_j \mathrm{sim}(Q_i, K_j)}
 <p>
 $$V_i' = \frac{\phi(Q_i)^T\sum_j\phi(K_j)V_j^T}{\phi(Q_i)^T\sum_j\phi(K_j)}\,. $$
 </p>
-<p>The result is a self-attention step that is $O(N)$ because the sums in the above expression can be computed once and reused for every query. In practice, this turns out to be especially powerful for inference, with speed-ups of 4000x reported in the talk! The authors go on to show that their formulation can also be used to express transformers as RNNs, which might be an interesting way to explore the <a href="https://mostafadehghani.com/2019/05/05/universal-transformers/">shortcomings</a> of these large langauge models.</p>
+<p>The result is a self-attention step that is $O(N)$ because the sums in the above expression can be computed once and reused for every query. In practice, this turns out to be especially powerful for inference, with speed-ups of 4000x reported in the talk!</p>
+<p>The authors go on to show that their formulation can also be used to express transformers as RNNs, which might be an interesting way to explore the <a href="https://mostafadehghani.com/2019/05/05/universal-transformers/">shortcomings</a> of these large langauge models.</p>
 
 </div>
 </div>
@@ -406,7 +407,8 @@ $$V_i' = \frac{\phi(Q_i)^T\sum_j\phi(K_j)V_j^T}{\phi(Q_i)^T\sum_j\phi(K_j)}\,. $
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Time series seems to be the neglected child of machine learning research, so I was happy to see a talk that introduced both theoretical novelty and practical applications.</p>
+<p>Time series seems to be the neglected child of machine learning research, so I was happy to see a talk that introduced both theoretical novelty and practical applications. The authors observe that imputation techniques for sparse or irregularly sampled time series tend to introduce a bias, or don't make sense at all.<sup id="fnref-5" class="footnote-ref"><a href="#fn-5">5</a></sup></p>
+<p>The</p>
 <p>Main idea is to learn classificaiton models without imputation / interpolation. Introduce SeFT.</p>
 <ul>
 <li>New approach</li>
@@ -489,7 +491,8 @@ $$V_i' = \frac{\phi(Q_i)^T\sum_j\phi(K_j)V_j^T}{\phi(Q_i)^T\sum_j\phi(K_j)}\,. $
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p></p>
 <div class="footnotes"><p id="fn-1">1. Downscaling is needed because naively training on a $224^2 \times 3$ sequence length would blow up the memory of the largest TPU!<a href="#fnref-1" class="footnote footnotes">↩</a></p></div>
@@ -498,18 +501,15 @@ $$V_i' = \frac{\phi(Q_i)^T\sum_j\phi(K_j)V_j^T}{\phi(Q_i)^T\sum_j\phi(K_j)}\,. $
 <p></p>
 <div class="footnotes"><p id="fn-3">3. The authors ascribe this generalisation power to the fact that each particle is only aware of local interactions in some 'connectivity radius', so the model is flexible enough to generalise to out-of-distribution inputs.<a href="#fnref-3" class="footnote footnotes">↩</a></p></div>
 <p></p>
-<div class="footnotes"><p id="fn-4">4. Quote from Stephen Merity's brilliant <em>&lt;a href=<a href="#fnref-4" class="footnote footnotes">↩</a>&lt;/p&gt;&lt;/div&gt;&lt;/p&gt;
+<div class="footnotes"><p id="fn-4">4. Quote from Stephen Merity's brilliant <em>Single Headed Attention RNN: Stop Thinking With Your Head</em>.<a href="#fnref-4" class="footnote footnotes">↩</a></p></div>
+<p></p>
+<div class="footnotes"><p id="fn-5">5. For example, in a medical context where a patient's vitals may only be measured if the doctor orders a test.<a href="#fnref-5" class="footnote footnotes">↩</a></p></div>
 
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
- 
+</div>
+</div>
+</div>
+</div>
 
-</em></p></div>
-</div>
-</div></div>
-</div>
 
 
   </div>
