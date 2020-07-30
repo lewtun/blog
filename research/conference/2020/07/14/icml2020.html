@@ -115,7 +115,7 @@ window.onload = wrap_img;
        • <span class="read-time" title="Estimated read time">
     
     
-      7 min read
+      8 min read
     
 </span></p>
 
@@ -181,11 +181,11 @@ window.onload = wrap_img;
 <p>This year I had the opportunity to attend the <a href="https://icml.cc/">International Conference on Machine Learning</a> (ICML) and decided to highlight some of the talks I found especially interesting. Although the conference was hosted entirely online, this provided two key benefits over attending in person:</p>
 <ul>
 <li>
-<strong>Clash resolution:</strong> with <a href="https://syncedreview.com/2020/06/01/icml-2020-announces-accepted-papers/#:~:text=Conference%20Industry-,ICML%202020%20Announces%20Accepted%20Papers,the%20prestigious%20machine%20learning%20conference.">1,088 papers accepted</a>, it is inevitable that multiple talks of interest would clash in the timetable. Watching the pre-recorded presentations on my own time provided a simple solution, not to mention the ability to quickly switch to a new talk if desired.</li>
+<strong>Clash resolution:</strong> with <a href="https://syncedreview.com/2020/06/01/icml-2020-announces-accepted-papers/#:~:text=Conference%20Industry-,ICML%202020%20Announces%20Accepted%20Papers,the%20prestigious%20machine%20learning%20conference.">1,088 papers accepted</a>, it is inevitable that multiple talks of interest would clash in the timetable. Watching the pre-recorded presentations in my own time provided a simple solution, not to mention the ability to quickly switch to a new talk if desired.</li>
 <li>
 <strong>Better Q&amp;A sessions:</strong> at large conferences it is not easy to get your questions answered directly after a talk, usually because the whole session is running overtime and the moderator wants to move onto the next speaker. By having two (!) dedicated Q&amp;A sessions for each talk, I found the discussions to be extremely insightful and much more personalised.</li>
 </ul>
-<p>Highlights below!</p>
+<p>Since I'm resigned to being in quarantine until 2050, I hope other conferences will adopt a similar format. Highlights below!</p>
 
 </div>
 </div>
@@ -285,7 +285,7 @@ $$ p(y|x) = \sum_{z\in \mathcal{Z}} p(y|x,z)p(z)\,.$$
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>To deal with this, the authors compute an embedding for every document in the corpus and then use <a href="https://ai.googleblog.com/2020/07/announcing-scann-efficient-vector.html">Maximum Inner Product Search</a> algorithms to find the approximate top $k$ documents.</p>
+<p>To deal with this, the authors compute an embedding for every document in the corpus and then use <a href="https://ai.googleblog.com/2020/07/announcing-scann-efficient-vector.html">Maximum Inner Product Search</a> algorithms to find the approximate top $k$ documents. The result is a hybrid model that significantly outperforms other approaches in open-domain question answering.</p>
 
 </div>
 </div>
@@ -382,7 +382,7 @@ $$V_i' = \frac{\phi(Q_i)^T\sum_j\phi(K_j)V_j^T}{\phi(Q_i)^T\sum_j\phi(K_j)}\,. $
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Set-Functions-for-Time-Series">
-<a class="anchor" href="#Set-Functions-for-Time-Series" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="https://icml.cc/virtual/2020/poster/6545">Set Functions for Time Series</a><a class="anchor-link" href="#Set-Functions-for-Time-Series"> </a>
+<a class="anchor" href="#Set-Functions-for-Time-Series" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="https://proceedings.icml.cc/static/paper_files/icml/2020/4750-Paper.pdf">Set Functions for Time Series</a><a class="anchor-link" href="#Set-Functions-for-Time-Series"> </a>
 </h3>
 </div>
 </div>
@@ -406,6 +406,7 @@ $$V_i' = \frac{\phi(Q_i)^T\sum_j\phi(K_j)V_j^T}{\phi(Q_i)^T\sum_j\phi(K_j)}\,. $
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>Time series seems to be the neglected child of machine learning research, so I was happy to see a talk that introduced both theoretical novelty and practical applications.</p>
 <p>Main idea is to learn classificaiton models without imputation / interpolation. Introduce SeFT.</p>
 <ul>
 <li>New approach</li>
