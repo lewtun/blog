@@ -1,6 +1,6 @@
 ---
 keywords: fastai
-description: An text classification example with 🤗  Transformers and Datasets
+description: A text classification example with 🤗  Transformers and Datasets
 title: Using data collators for training and error analysis
 comments: false
 categories: [til,nlp,huggingface,transformers,datasets]
