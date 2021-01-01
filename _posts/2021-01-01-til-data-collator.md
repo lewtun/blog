@@ -1,6 +1,6 @@
 ---
 keywords: fastai
-description: An example with 🤗  Transformers and Datasets
+description: An text classification example with 🤗  Transformers and Datasets
 title: Using data collators for training and error analysis
 comments: false
 categories: [til,nlp,huggingface,transformers,datasets]
@@ -244,7 +244,7 @@ layout: notebook
     <span class="n">per_device_eval_batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
     <span class="n">evaluation_strategy</span><span class="o">=</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span>
     <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">logging_steps</span><span class="o">=</span><span class="n">logging_steps</span><span class="p">,</span>
+    <span class="n">logging_steps</span><span class="o">=</span><span class="n">logging_steps</span>
 <span class="p">)</span>
 </pre></div>
 
@@ -491,6 +491,7 @@ layout: notebook
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s2">&quot;display.max_colwidth&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
 <span class="n">losses_ds</span><span class="o">.</span><span class="n">set_format</span><span class="p">(</span><span class="s1">&#39;pandas&#39;</span><span class="p">)</span>
 <span class="n">losses_df</span> <span class="o">=</span> <span class="n">losses_ds</span><span class="p">[:][[</span><span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="s1">&#39;predicted_label&#39;</span><span class="p">,</span> <span class="s1">&#39;loss&#39;</span><span class="p">]]</span>
