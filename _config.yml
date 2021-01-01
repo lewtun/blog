@@ -6,8 +6,8 @@
 # https://learn-the-web.algonquindesign.ca/topics/markdown-yaml-cheat-sheet/#yaml
 # https://learnxinyminutes.com/docs/yaml/
 
-title: Lewis Tunstall
-description: Posts on machine learning at irregularly spaced intervals.
+title: Lewis Tunstall's Blog
+description: Posts on machine learning, physics, and topology at irregularly spaced intervals.
 github_username: lewtun
 # you can comment the below line out if your repo name is not different than your baseurl
 github_repo: "blog"
@@ -68,8 +68,8 @@ include:
 
 # This specifies what badges are turned on by default for notebook posts.
 default_badges:
-  github: true
-  binder: true
+  github: false
+  binder: false
   colab: true
 
 # Escape HTML in post descriptions
