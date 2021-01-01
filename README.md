@@ -6,7 +6,7 @@
 
 https://lewtun.github.io/blog/
 
-# My Blog
+# Lewis Tunstall's Blog
 
 
 _powered by [fastpages](https://github.com/fastai/fastpages)_
