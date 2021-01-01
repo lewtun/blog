@@ -334,14 +334,6 @@ layout: notebook
     </tr>
   </tbody>
 </table><p>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
     {% endraw %}
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
@@ -588,7 +580,6 @@ layout: notebook
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>{{ 'The non-padded version of this function comes from <a href="https://twitter.com/lvwerra?s=20">Leandro von Werra</a>.' | fndetail: 1 }}</p>
 
-</div>
 </div>
 </div>
 </div>
