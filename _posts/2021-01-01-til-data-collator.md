@@ -593,7 +593,7 @@ layout: notebook
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>{{ 'The non-padded version of this function is adaptem from an implementation by <a href="https://twitter.com/lvwerra?s=20">Leandro von Werra</a>.' | fndetail: 1 }}</p>
+<p>{{ 'The non-padded version of this function is adapted from an implementation by <a href="https://twitter.com/lvwerra?s=20">Leandro von Werra</a>.' | fndetail: 1 }}</p>
 
 </div>
 </div>
