@@ -116,7 +116,7 @@ layout: notebook
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
-<p>so we can get the ID by just using <code>jq ".id"</code>. Ditto for the response to the <code>/api/builds</code> endpoint which returns JSON of the form</p>
+<p>so we can get the ID by just using <code>jq ".id"</code>. Ditto for the response to the <code>/api/builds</code> endpoint which returns JSON of the form:</p>
 <div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">308595</span><span class="p">,</span>
     <span class="nt">&quot;branch&quot;</span><span class="p">:</span> <span class="s2">&quot;main&quot;</span><span class="p">,</span>
@@ -148,6 +148,7 @@ layout: notebook
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
+<p>In this case the parent <code>status</code> field is an array, hence the need to pick out the first element with <code>status[0]</code>.</p>
 
 </div>
 </div>

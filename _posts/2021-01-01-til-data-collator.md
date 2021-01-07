@@ -31,12 +31,25 @@ layout: notebook
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Recently, <a href="https://twitter.com/GuggerSylvain?s=20">Sylvain Gugger</a> from HuggingFace has created some nice tutorials on using <code>transformers</code> for <a href="https://colab.research.google.com/github/huggingface/notebooks/blob/master/examples/text_classification.ipynb">text classification</a> and <a href="https://colab.research.google.com/github/huggingface/notebooks/blob/master/examples/token_classification.ipynb#scrollTo=545PP3o8IrJV">named entity recognition</a>. One trick that caught my attention was the use of a <em>data collator</em> in the trainer, which automatically pads the model inputs in a batch to the length of the longest example. This bypasses the need to set a <em>global</em> maximum sequence length, and in practice leads to faster training since we perform fewer redundant computations on the padded tokens and attention masks.</p>
 <p>I wanted to use a data collator for both training <em>and</em> error analysis (e.g. by inspecting the top losses of the model). One problem: during training, each batch is collated on the fly so how do I pad my inputs in subsequent <code>Dataset.map</code> operations?</p>
-<p>The solution I ended up with was to simply grab the data collator from the trainer and use it in my post-processing functions:</p>
+<p>For <em>sequence classification</em> tasks, the solution I ended up with was to simply grab the data collator from the trainer and use it in my post-processing functions:</p>
 <div class="highlight"><pre><span></span><span class="n">data_collator</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">data_collator</span>
 
 <span class="k">def</span> <span class="nf">processing_function</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
-    <span class="c1"># pad inputs and (possibly) labels</span>
+    <span class="c1"># pad inputs</span>
     <span class="n">batch</span> <span class="o">=</span> <span class="n">data_collator</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+    <span class="o">...</span>
+    <span class="k">return</span> <span class="n">batch</span>
+</pre></div>
+<p>For <em>token classification</em> tasks, there is a dedicated <code>DataCollatorForTokenClassification</code> which expects a <code>list</code> of <code>dicts</code>, where each <code>dict</code> represents a single example in the dataset. Since a <code>Dataset</code> slice returns a <code>dict</code> of <code>lists</code>, we need a two more lines to wrangle the data in the expected format:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">DataCollatorForTokenClassification</span>
+
+<span class="n">data_collator</span> <span class="o">=</span> <span class="n">DataCollatorForTokenClassification</span><span class="p">(</span><span class="n">trainer</span><span class="o">.</span><span class="n">tokenizer</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">processing_function</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
+    <span class="c1"># convert dict of lists to list of dicts</span>
+    <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">t</span><span class="p">))</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">batch</span><span class="o">.</span><span class="n">values</span><span class="p">())]</span>
+    <span class="c1"># pad inputs and labels</span>
+    <span class="n">batch</span> <span class="o">=</span> <span class="n">data_collator</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
     <span class="o">...</span>
     <span class="k">return</span> <span class="n">batch</span>
 </pre></div>
@@ -61,8 +74,7 @@ layout: notebook
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">datasets</span> <span class="kn">import</span> <span class="n">load_dataset</span>
 
 <span class="n">imdb</span> <span class="o">=</span> <span class="p">(</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;imdb&#39;</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="s1">&#39;train&#39;</span><span class="p">)</span>
-        <span class="o">.</span><span class="n">train_test_split</span><span class="p">(</span><span class="n">train_size</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
-       <span class="p">)</span>
+        <span class="o">.</span><span class="n">train_test_split</span><span class="p">(</span><span class="n">train_size</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mi">200</span><span class="p">))</span>
 <span class="n">imdb</span>
 </pre></div>
 
@@ -122,8 +134,7 @@ layout: notebook
 <span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
 <span class="n">model</span> <span class="o">=</span> <span class="p">(</span><span class="n">AutoModelForSequenceClassification</span>
          <span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="n">num_labels</span><span class="p">)</span>
-         <span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-        <span class="p">)</span>
+         <span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">))</span>
 </pre></div>
 
     </div>
@@ -244,8 +255,7 @@ layout: notebook
     <span class="n">per_device_eval_batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
     <span class="n">evaluation_strategy</span><span class="o">=</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span>
     <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">logging_steps</span><span class="o">=</span><span class="n">logging_steps</span>
-<span class="p">)</span>
+    <span class="n">logging_steps</span><span class="o">=</span><span class="n">logging_steps</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -284,8 +294,7 @@ layout: notebook
     <span class="n">compute_metrics</span><span class="o">=</span><span class="n">compute_metrics</span><span class="p">,</span>
     <span class="n">train_dataset</span><span class="o">=</span><span class="n">imdb_enc</span><span class="p">[</span><span class="s1">&#39;train&#39;</span><span class="p">],</span>
     <span class="n">eval_dataset</span><span class="o">=</span><span class="n">imdb_enc</span><span class="p">[</span><span class="s1">&#39;test&#39;</span><span class="p">],</span>
-    <span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenizer</span>
-<span class="p">)</span>
+    <span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenizer</span><span class="p">)</span>
 
 <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">();</span>
 </pre></div>
@@ -334,6 +343,14 @@ layout: notebook
     </tr>
   </tbody>
 </table><p>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
     {% endraw %}
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
@@ -445,8 +462,7 @@ layout: notebook
         <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;predicted_label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">logits</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="n">loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span>
-        <span class="n">output</span><span class="o">.</span><span class="n">logits</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;none&quot;</span>
-    <span class="p">)</span>
+        <span class="n">output</span><span class="o">.</span><span class="n">logits</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>
     <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;loss&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss</span>
     
     <span class="c1"># datasets requires list of NumPy array data types</span>
@@ -457,8 +473,7 @@ layout: notebook
 
 
 <span class="n">losses_ds</span> <span class="o">=</span> <span class="n">imdb_enc</span><span class="p">[</span><span class="s1">&#39;test&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
-    <span class="n">loss_per_example</span><span class="p">,</span> <span class="n">batched</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span>
-<span class="p">)</span>
+    <span class="n">loss_per_example</span><span class="p">,</span> <span class="n">batched</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -578,8 +593,9 @@ layout: notebook
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>{{ 'The non-padded version of this function comes from <a href="https://twitter.com/lvwerra?s=20">Leandro von Werra</a>.' | fndetail: 1 }}</p>
+<p>{{ 'The non-padded version of this function is adaptem from an implementation by <a href="https://twitter.com/lvwerra?s=20">Leandro von Werra</a>.' | fndetail: 1 }}</p>
 
+</div>
 </div>
 </div>
 </div>
