@@ -220,23 +220,9 @@ window.onload = wrap_img;
     <span class="c1"># apply the ClassLabel.int2str method to each token</span>
     <span class="n">proc_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="p">{</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tags_col</span><span class="si">}</span><span class="s2">_str&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">tags</span><span class="o">.</span><span class="n">int2str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="n">tags_col</span><span class="p">]]}</span>
     <span class="k">return</span> <span class="n">ds</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">proc_fn</span><span class="p">)</span>
-</pre></div>
 
-    </div>
-</div>
-</div>
 
-</div>
-    
-
-    
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">conll</span> <span class="o">=</span> <span class="n">create_tag_names</span><span class="p">(</span><span class="n">conll</span><span class="p">,</span> <span class="s1">&#39;ner_tags&#39;</span><span class="p">)</span>
+<span class="n">conll</span> <span class="o">=</span> <span class="n">create_tag_names</span><span class="p">(</span><span class="n">conll</span><span class="p">,</span> <span class="s1">&#39;ner_tags&#39;</span><span class="p">)</span>
 <span class="n">conll</span><span class="p">[</span><span class="s1">&#39;train&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
 
