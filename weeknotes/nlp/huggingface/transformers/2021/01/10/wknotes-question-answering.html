@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Weeknotes: Question answering with 🤗 transformers, mock interviews | Lewis Tunstall’s Blog</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Weeknotes: Question answering with 🤗 transformers, mock interviews" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Posts on machine learning, physics, and topology at irregularly spaced intervals." />
+<meta property="og:description" content="Posts on machine learning, physics, and topology at irregularly spaced intervals." />
+<link rel="canonical" href="https://lewtun.github.io/blog/weeknotes/nlp/huggingface/transformers/2021/01/10/wknotes-question-answering.html" />
+<meta property="og:url" content="https://lewtun.github.io/blog/weeknotes/nlp/huggingface/transformers/2021/01/10/wknotes-question-answering.html" />
+<meta property="og:site_name" content="Lewis Tunstall’s Blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-01-10T00:00:00-06:00" />
+<script type="application/ld+json">
+{"url":"https://lewtun.github.io/blog/weeknotes/nlp/huggingface/transformers/2021/01/10/wknotes-question-answering.html","@type":"BlogPosting","headline":"Weeknotes: Question answering with 🤗 transformers, mock interviews","dateModified":"2021-01-10T00:00:00-06:00","datePublished":"2021-01-10T00:00:00-06:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://lewtun.github.io/blog/weeknotes/nlp/huggingface/transformers/2021/01/10/wknotes-question-answering.html"},"description":"Posts on machine learning, physics, and topology at irregularly spaced intervals.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/blog/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://lewtun.github.io/blog/feed.xml" title="Lewis Tunstall's Blog" /><link rel="shortcut icon" type="image/x-icon" href="/blog/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/blog/">Lewis Tunstall&#39;s Blog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/blog/about/">About Me</a><a class="page-link" href="/blog/search/">Search</a><a class="page-link" href="/blog/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Weeknotes: Question answering with 🤗 transformers, mock interviews</h1><p class="post-meta post-meta-title"><time class="dt-published" datetime="2021-01-10T00:00:00-06:00" itemprop="datePublished">
+        Jan 10, 2021
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      8 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/blog/categories/#weeknotes">weeknotes</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/blog/categories/#nlp">nlp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/blog/categories/#huggingface">huggingface</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/blog/categories/#transformers">transformers</a>
+        
+      
+      </p>
+    
+
+    
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2021-01-10-wknotes-question-answering.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>During my PhD and postdoc, I kept detailed research notes that I would often revisit to reproduce a lengthy calculation or simply take stock of the progress I'd made on my projects.</p>
+<p><img src="/blog/images/copied_from_nb/my_icons/physics.jpg" alt="" title="Good luck trying to remember what the colours mean one year later ..." /></p>
+<p>For various reasons, I dropped this habit when I switched to industry<sup id="fnref-1" class="footnote-ref"><a href="#fn-1">1</a></sup> and nowadays find myself digging out code snippets or techniques from a tangle of Google Docs,  Git repositories, and Markdown files that I've built up over the years.</p>
+<p>To break this anti-pattern, I've decided to "work in public" as much as possible this year, mostly in the form of <a href="https://www.urbandictionary.com/define.php?term=TIL">TILs</a> and weeknotes. Here, I am drawing inspiration from the prolific <a href="https://twitter.com/simonw?s=20">Simon Willison</a>, whose <a href="https://simonwillison.net/">blog</a> meticulously documents the development of his open-source projects.<sup id="fnref-2" class="footnote-ref"><a href="#fn-2">2</a></sup></p>
+<p>To that end, here's the first weeknotes of the year - hopefully they're not the last!</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Question-answering">Question answering<a class="anchor-link" href="#Question-answering"> </a></h2><p>This week I've been doing a deep dive into extractive question answering as part of a book chapter I'm writing on compression methods for Transformers. Although I built a question answering PoC with BERT in the dark ages of 2019, I was curious to see how the implementation could be done in the <code>transformers</code> library, specifically with a custom <code>Trainer</code> class and running everything inside Jupyter notebooks.</p>
+<p>Fortunately, <a href="https://twitter.com/GuggerSylvain?s=20">Sylvain Gugger</a> at HuggingFace had already implemented</p>
+<ul>
+<li>A <a href="https://github.com/huggingface/notebooks/blob/master/examples/question_answering.ipynb">tutorial</a> on fine-tuning language models for question answering, but without a custom <code>Trainer</code></li>
+<li>A custom <code>QuestionAnsweringTrainer</code> as part of the <a href="https://github.com/huggingface/transformers/tree/master/examples/question-answering">question answering scripts</a> in <code>transformers</code></li>
+</ul>
+<p>so my warm-up task this week was to simply merge the two in a single notebook and fine-tune <code>bert-base-uncased</code> on SQuAD v1.</p>
+<p>I implemented a <em>very</em> scrappy version that achieves this in my <code>transformerlab</code> repository, and the main lesson I learnt is that</p>
+<blockquote><p>Dealing with context size is tricky for long documents</p>
+</blockquote>
+<p>Transformer models can only process a finite number of input tokens, a property usually referred to as the maximum context size. As described in Sylvain's tutorial, naive truncation of documents for question answering is problematic because</p>
+<blockquote><p>removing part of the the context might result in losing the answer we are looking for.</p>
+</blockquote>
+<p>The solution is to apply a <em>sliding window</em><sup id="fnref-3" class="footnote-ref"><a href="#fn-3">3</a></sup> to the input context, so that long contexts are split into <em>multiple</em> features. An example from the tutorial shows how this works by introducing two new hyperparameters <code>max_length</code> and <code>doc_stride</code> that control the degree of overlap (bold shows the overlapping region):</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<blockquote><p>[CLS] how many wins does the notre dame men's basketball team have? [SEP] the men's basketball team has over 1, 600 wins, one of only 12 schools who have reached that mark, and have appeared in 28 ncaa tournaments. former player austin carr holds the record for most points scored in a single game of the tournament with 61. although the team has never won the ncaa tournament, they were named by the helms athletic foundation as national champions twice. the team has orchestrated a number of upsets of number one ranked teams, the most notable of which was ending ucla's record 88 - game winning streak in 1974. the team has beaten an additional eight number - one teams, and those nine wins rank second, to ucla's 10, all - time in wins against the top team. the team plays in newly renovated purcell pavilion ( within the edmund p. joyce center ), which reopened for the beginning of the 2009 – 2010 season. the team is coached by mike brey, who, as of the 2014 – 15 season, his fifteenth at notre dame, has achieved a 332 - 165 record. in 2009 they were invited to the nit, where they advanced to the semifinals but were beaten by penn state who went on and beat baylor in the <em><strong>championship. the 2010 – 11 team concluded its regular season ranked number seven in the country, with a record of 25 – 5, brey's fifth straight 20 - win season, and a second - place finish in the big east. during the 2014 - 15 season, the team went 32 - 6 and won the acc conference tournament, later advancing to the elite 8, where the fighting irish lost on a missed buzzer - beater against then undefeated kentucky. led by nba draft picks jerian grant and pat connaughton, the fighting irish beat the eventual national champion duke blue devils twice during the season. the 32 wins were</strong></em> [SEP]</p>
+<p>[CLS] how many wins does the notre dame men's basketball team have? [SEP] championship. the 2010 – 11 team concluded its regular season ranked number seven in the country, with a record of 25 – 5, brey's fifth straight 20 - win season, and a second - place finish in the big east. during the 2014 - 15 season, the team went 32 - 6 and won the acc conference tournament, later advancing to the elite 8, where the fighting irish lost on a missed buzzer - beater against then undefeated kentucky. led by nba draft picks jerian grant and pat connaughton, the fighting irish beat the eventual national champion duke blue devils twice during the season. the 32 wins were the most by the fighting irish team since 1908 - 09. [SEP]</p>
+</blockquote>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Remarkably, <code>transformers</code> supports this preprocessing logic out of the box, so one just has to specify a few arguments in the tokenizer:</p>
+<div class="highlight"><pre><span></span><span class="n">tokenized_example</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span>
+    <span class="n">example</span><span class="p">[</span><span class="s2">&quot;question&quot;</span><span class="p">],</span>
+    <span class="n">example</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">],</span>
+    <span class="n">max_length</span><span class="o">=</span><span class="n">max_length</span><span class="p">,</span>
+    <span class="n">truncation</span><span class="o">=</span><span class="s2">&quot;only_second&quot;</span><span class="p">,</span>
+    <span class="n">return_overflowing_tokens</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">return_offsets_mapping</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">stride</span><span class="o">=</span><span class="n">doc_stride</span><span class="p">)</span>
+</pre></div>
+<p>One drawback from this approach is that it introduces significant complexity into the data preparation step:</p>
+<ul>
+<li>With multiple features per example, one needs to do some heavy wrangling to pick out the start and end positions of each answer. For example, the <code>postprocess_qa_predictions</code> function in Sylvain's tutorial is about 80 lines long, and breaking this down for readers is likely to distract from the main focus on compression methods.</li>
+<li>We need slightly different logic for preprocessing the training and validation sets (see the <code>prepare_train_features</code> and <code>prepare_validation_features</code>)</li>
+</ul>
+<p>Instead, I may opt for the simpler, but less rigourous approach of truncating the long examples. As shown in the <code>transformer</code> <a href="https://huggingface.co/transformers/custom_datasets.html#question-answering-with-squad-2-0">docs</a>), we'd only need to define a custom dataset</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="k">class</span> <span class="nc">SquadDataset</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encodings</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encodings</span> <span class="o">=</span> <span class="n">encodings</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">encodings</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encodings</span><span class="o">.</span><span class="n">input_ids</span><span class="p">)</span>
+</pre></div>
+<p>and then pass the encoding for the training and validation sets as follows:</p>
+<div class="highlight"><pre><span></span><span class="n">train_encodings</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">train_contexts</span><span class="p">,</span> <span class="n">train_questions</span><span class="p">,</span> <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">val_encodings</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">val_contexts</span><span class="p">,</span> <span class="n">val_questions</span><span class="p">,</span> <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">train_dataset</span> <span class="o">=</span> <span class="n">SquadDataset</span><span class="p">(</span><span class="n">train_encodings</span><span class="p">)</span>
+<span class="n">val_dataset</span> <span class="o">=</span> <span class="n">SquadDataset</span><span class="p">(</span><span class="n">val_encodings</span><span class="p">)</span>
+</pre></div>
+<p>From here we can just use the native <code>Trainer</code> in <code>transformers</code>, together with the <code>squad</code> metric from <code>datasets</code>. By looking at the distribution of question and context lengths, we can see that this simplification will only fail in a very small number of examples:</p>
+<p><img src="/blog/images/copied_from_nb/my_icons/squad-lengths.png" alt="" /></p>
+<p>Another alternative would be to adopt the "retriever-reader" architecture that I used in my PoC (where I split long documents into smaller paragraphs), but that introduces it's own set of complexity that I'd like to avoid.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Running-a-mock-interview">Running a mock interview<a class="anchor-link" href="#Running-a-mock-interview"> </a></h2><p>A friend of mine is applying for a research scientist position and we thought it would be fun to run a couple of mock interviews together. Since the position is likely to involve Transformers, I asked my friend a few GPT-related questions (e.g. how does the architecture differ from BERT and what is the difference between GPT / GPT-2 and GPT-3?), followed by a coding session to see how fast one could implement GPT from scratch. The goal was to approach a skeleton of <a href="https://karpathy.ai/">Andrej Karpathy's</a> excellent <a href="https://github.com/karpathy/minGPT">minGPT</a> implementation</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>
+<center>
+    <div class="jekyll-twitter-plugin"><blockquote class="twitter-tweet"><p lang="en" dir="ltr">I wrote a minimal/educational GPT training library in PyTorch, am calling it minGPT as it is only around ~300 lines of code: <a href="https://t.co/79S9lShJRN">https://t.co/79S9lShJRN</a> +demos for addition and character-level language model. (quick weekend project, may contain sharp edges)</p>&mdash; Andrej Karpathy (@karpathy) <a href="https://twitter.com/karpathy/status/1295410274095095810?ref_src=twsrc%5Etfw">August 17, 2020</a></blockquote>
+<script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+</center>
+</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and the experience taught me a few lessons:</p>
+<ul>
+<li>There's a significant difference between being a power-user of a library like <code>transformers</code> versus deeply knowing how every layer, activation function, etc in a deep neural architecture is put together. Running the interview reminded me that I should aim to block some time per week to hone the foundations of my machine learning knowledge.</li>
+<li>Open-ended coding interviews like this are way more fun to conduct than the usual LeetCode / HackerRank problems one usually encounters in industry. To me, they resemble a pair-programming interaction that gives the interviewer a pretty good feel for what it would be like to work closely with the candidate. Something to remember the next time I'm interviewing people for a real job!</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Papers-this-week">Papers this week<a class="anchor-link" href="#Papers-this-week"> </a></h2><p>This week I've been mostly reading papers on compressing Transformers and how to improve few-shot learning <em>without</em> resorting to massive scaling:</p>
+<ul>
+<li><a href="https://arxiv.org/abs/1910.01108"><em>DistilBERT, a distilled version of BERT: smaller, faster, cheaper and lighter</em></a> by Victor Sanh, Lysandre Debut, Julien Chaumond, and Thomas Wolf (2019)</li>
+<li><a href="https://arxiv.org/abs/2010.13382"><em>FastFormers: Highly Efficient Transformer Models for Natural Language Understanding</em></a> by Young Jin Kim and Hany Hassan Awadalla (2020)</li>
+<li><a href="https://arxiv.org/abs/2006.15315"><em>Uncertainty-aware Self-training for Text Classification with Few Labels</em></a> by Subhabrata Mukherjee and Ahmed Hassan Awadallah (2020)</li>
+</ul>
+<p>This week also coincided with the release of OpenAI's <a href="https://openai.com/blog/dall-e/">DALL-E</a> which, although light on implementation details, provided a fun interface to see how far you can push the limits of text-to-image generation:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="/blog/images/copied_from_nb/my_icons/dalle.png" alt="" title="The DALL-E blog post has many examples involving Capybaras, which happen to be my favourite animal." /></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="TIL-this-week">TIL this week<a class="anchor-link" href="#TIL-this-week"> </a></h2><ul>
+<li><a href="https://lewtun.github.io/blog/til/2021/01/07/til-poll-api-with-bash.html">Polling a web service with bash and jq</a></li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><div class="footnotes"><p id="fn-1">1. Mostly due to playing an insane game of "data science catch-up" at an early-stage startup.<a href="#fnref-1" class="footnote footnotes">↩</a></p></div></p>
+<p><div class="footnotes"><p id="fn-2">2. Even down to the level of reviewing his own <a href="https://github.com/simonw/datasette/pull/1117">pull requests</a>!<a href="#fnref-2" class="footnote footnotes">↩</a></p></div></p>
+<p><div class="footnotes"><p id="fn-3">3. We want a <em>sliding</em> window instead of a <em>tumbling</em> one because the answer might appear across the boundary of the two windows.<a href="#fnref-3" class="footnote footnotes">↩</a></p></div></p>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><a class="u-url" href="/blog/weeknotes/nlp/huggingface/transformers/2021/01/10/wknotes-question-answering.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/blog/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/blog/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>Posts on machine learning, physics, and topology at irregularly spaced intervals.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/lewtun" title="lewtun"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/_lewtun" title="_lewtun"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
