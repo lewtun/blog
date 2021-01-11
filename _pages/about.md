@@ -4,9 +4,9 @@ title: About Me
 permalink: /about/
 ---
 
-G'day! I'm Lewis and welcome to my blog. I'm a data scientist (currently taking extended paternity leave) with several years experience building machine learning-powered applications for Swiss startups and enterprises, mostly in the domains of natural language processing, time series, and topological data analysis.
+G'day! I'm Lewis and welcome to my blog. I'm a data scientist with several years experience building machine learning-powered applications for Swiss startups and enterprises, mostly in the domains of natural language processing, time series, and topological data analysis.
 
-Some public examples of my work include the development of the "no code" deep learning platform [Giotto AI](https://giotto.ai/), integrating topological data analysis algorithms for the [giotto-tda](https://towardsdatascience.com/getting-started-with-giotto-learn-a-python-library-for-topological-machine-learning-451d88d2c4bc) library, and the implementation of a novel [anomaly detection algorithm](https://drive.google.com/drive/folders/1kWpyWOLxUYXJIV7EbLgslzCZ3cmN2uCZ) at Swiss Mobiliar.
+Some public examples of my work include the development of the [Giotto AI](https://giotto.ai/) "no code" deep learning platform, integrating topological data analysis algorithms for the [giotto-tda](https://towardsdatascience.com/getting-started-with-giotto-learn-a-python-library-for-topological-machine-learning-451d88d2c4bc) library, and the implementation of a novel [anomaly detection algorithm](https://drive.google.com/drive/folders/1kWpyWOLxUYXJIV7EbLgslzCZ3cmN2uCZ) at Swiss Mobiliar. More recently, I've been applying Transformers to automate 
 
 In a previous life I was a [theoretical physicist](https://scholar.google.com/citations?user=Hc6MI0QAAAAJ&hl=en), where I developed quantum field theories to make sense of data from collider and dark matter experiments.
 
