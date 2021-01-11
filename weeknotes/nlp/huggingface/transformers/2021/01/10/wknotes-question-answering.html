@@ -192,7 +192,7 @@ window.onload = wrap_img;
 <li>With multiple features per example, one needs to do some heavy wrangling to pick out the start and end positions of each answer. For example, the <code>postprocess_qa_predictions</code> function in Sylvain's tutorial is about 80 lines long, and breaking this down for readers is likely to distract from the main focus on compression methods.</li>
 <li>We need slightly different logic for preprocessing the training and validation sets (see the <code>prepare_train_features</code> and <code>prepare_validation_features</code>)</li>
 </ul>
-<p>Instead, I may opt for the simpler, but less rigourous approach of truncating the long examples. As shown in the <code>transformer</code> <a href="https://huggingface.co/transformers/custom_datasets.html#question-answering-with-squad-2-0">docs</a>), we'd only need to define a custom dataset</p>
+<p>Instead, I may opt for the simpler, but less rigourous approach of truncating the long examples. As shown in the <code>transformer</code> <a href="https://huggingface.co/transformers/custom_datasets.html#question-answering-with-squad-2-0">docs</a>, we'd only need to define a custom dataset</p>
 <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 
 <span class="k">class</span> <span class="nc">SquadDataset</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
