@@ -41,8 +41,10 @@ layout: notebook
 <li>A <a href="https://github.com/huggingface/notebooks/blob/master/examples/question_answering.ipynb">tutorial</a> on fine-tuning language models for question answering, but without a custom <code>Trainer</code></li>
 <li>A custom <code>QuestionAnsweringTrainer</code> as part of the <a href="https://github.com/huggingface/transformers/tree/master/examples/question-answering">question answering scripts</a> in <code>transformers</code>.</li>
 </ul>
-<p>so my warm-up task this week was to simply merge the two in a single notebook and fine-tune <code>bert-base-uncased</code> on SQuAD v1. I implemented very scrappy version that achieves this in my <code>transformerlab</code> repository, and learnt a couple of new things along the way:</p>
-<h3 id="Dealing-with-sequence-length-is-tricky-for-long-documents">Dealing with sequence length is tricky for long documents<a class="anchor-link" href="#Dealing-with-sequence-length-is-tricky-for-long-documents"> </a></h3><p>Transformer models can only process a finite number of input tokens, a property usually referred to as the maximum sequence length. As described in Sylvain's tutorial, naive truncation of documents for question answering is problematic because</p>
+<p>so my warm-up task this week was to simply merge the two in a single notebook and fine-tune <code>bert-base-uncased</code> on SQuAD v1. I implemented very scrappy version that achieves this in my <code>transformerlab</code> repository, and the main lesson I learnt is that</p>
+<blockquote><p>Dealing with sequence length is tricky for long documents</p>
+</blockquote>
+<p>Transformer models can only process a finite number of input tokens, a property usually referred to as the maximum sequence length. As described in Sylvain's tutorial, naive truncation of documents for question answering is problematic because</p>
 <blockquote><p>removing part of the the context might result in losing the answer we are looking for.</p>
 </blockquote>
 <p>The solution is to apply a <em>sliding window</em>{% fn 2 %} to the input context, so that long contexts end up producing <em>multiple</em> features. An example from the tutorial shows how this works by introducing two new hyperparameters <code>max_length</code> and <code>doc_stride</code> that control the degree of overlap (bold shows the overlapping region):</p>
@@ -61,7 +63,7 @@ layout: notebook
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Remarkably, <code>transformers</code> supports this preprocessing logic out of the box, so one just has to specify a few arguments in the <code>tokenizer</code>:</p>
+<p>Remarkably, <code>transformers</code> supports this preprocessing logic out of the box, so one just has to specify a few arguments in the tokenizer:</p>
 <div class="highlight"><pre><span></span><span class="n">tokenized_example</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span>
     <span class="n">example</span><span class="p">[</span><span class="s2">&quot;question&quot;</span><span class="p">],</span>
     <span class="n">example</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">],</span>
@@ -96,7 +98,7 @@ layout: notebook
 <p>and the experience taught me a few lessons:</p>
 <ul>
 <li>There's a significant difference between being a power-user of a library like <code>transformers</code> versus deeply knowing how every layer, activation function, etc in a deep neural architecture is put together. Running the interview reminded me that I should aim to block time per week to hone the foundations of my machine learning knowledge.</li>
-<li>Open-ended coding interviews like this are way more fun to conduct than the usual LeetCode / HackerRank problems one usually encounters in tech. To me, they resemble a pair-programming interaction that gives the interviewer a pretty good feel for what it would be like to work closely with the candidate. Something to remeber the next time I'm interviewing people for a real job!</li>
+<li>Open-ended coding interviews like this are way more fun to conduct than the usual LeetCode / HackerRank problems one usually encounters in tech. To me, they resemble a pair-programming interaction that gives the interviewer a pretty good feel for what it would be like to work closely with the candidate. Something to remember the next time I'm interviewing people for a real job!</li>
 </ul>
 
 </div>
