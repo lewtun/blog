@@ -26,8 +26,10 @@ layout: notebook
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>During my PhD and postdoc, I kept detailed research notes that I would often revisit to reproduce a lengthy calculation or simply take stock of the progress I'd made on my projects. For various reasons, I dropped this habit when I switched to industry and nowadays find myself digging out code snippets or techniques from a tangle of Google Docs,  Git repositories, and Markdown files that I've built up over the years.</p>
-<p>To break this anti-pattern, I've decided to "work in public" as much as possible this year, mostly in the form of <a href="https://www.urbandictionary.com/define.php?term=TIL">TILs</a> and weeknotes. Here, I am drawing inspiration from the prolific <a href="https://twitter.com/simonw?s=20">Simon Willison</a>, whose <a href="https://simonwillison.net/">blog</a> meticulously documents the development of his open-source projects.{% fn 1 %}</p>
+<p>During my PhD and postdoc, I kept detailed research notes that I would often revisit to reproduce a lengthy calculation or simply take stock of the progress I'd made on my projects.</p>
+<p><img src="/blog/images/copied_from_nb/my_icons/physics.jpg" alt="" title="Good luck trying to remember what the colours mean one year later ..."></p>
+<p>For various reasons, I dropped this habit when I switched to industry{% fn 1 %} and nowadays find myself digging out code snippets or techniques from a tangle of Google Docs,  Git repositories, and Markdown files that I've built up over the years.</p>
+<p>To break this anti-pattern, I've decided to "work in public" as much as possible this year, mostly in the form of <a href="https://www.urbandictionary.com/define.php?term=TIL">TILs</a> and weeknotes. Here, I am drawing inspiration from the prolific <a href="https://twitter.com/simonw?s=20">Simon Willison</a>, whose <a href="https://simonwillison.net/">blog</a> meticulously documents the development of his open-source projects.{% fn 2 %}</p>
 <p>To that end, here's the first weeknotes of the year - hopefully they're not the last!</p>
 
 </div>
@@ -35,19 +37,20 @@ layout: notebook
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Question-answering">Question answering<a class="anchor-link" href="#Question-answering"> </a></h2><p>This week I've been doing a deep dive into extractive question answering as part of a book chapter I'm writing on compression methods for Transformers. Although I'd built a question answering PoC with BERT in the dark ages of 2019, I was curious to see how the implementation could be done in the <code>transformers</code> library, specifically with a custom <code>Trainer</code> class and running everything inside Jupyter notebooks.</p>
+<h2 id="Question-answering">Question answering<a class="anchor-link" href="#Question-answering"> </a></h2><p>This week I've been doing a deep dive into extractive question answering as part of a book chapter I'm writing on compression methods for Transformers. Although I built a question answering PoC with BERT in the dark ages of 2019, I was curious to see how the implementation could be done in the <code>transformers</code> library, specifically with a custom <code>Trainer</code> class and running everything inside Jupyter notebooks.</p>
 <p>Fortunately, <a href="https://twitter.com/GuggerSylvain?s=20">Sylvain Gugger</a> at HuggingFace had already implemented</p>
 <ul>
 <li>A <a href="https://github.com/huggingface/notebooks/blob/master/examples/question_answering.ipynb">tutorial</a> on fine-tuning language models for question answering, but without a custom <code>Trainer</code></li>
-<li>A custom <code>QuestionAnsweringTrainer</code> as part of the <a href="https://github.com/huggingface/transformers/tree/master/examples/question-answering">question answering scripts</a> in <code>transformers</code>.</li>
+<li>A custom <code>QuestionAnsweringTrainer</code> as part of the <a href="https://github.com/huggingface/transformers/tree/master/examples/question-answering">question answering scripts</a> in <code>transformers</code></li>
 </ul>
-<p>so my warm-up task this week was to simply merge the two in a single notebook and fine-tune <code>bert-base-uncased</code> on SQuAD v1. I implemented very scrappy version that achieves this in my <code>transformerlab</code> repository, and the main lesson I learnt is that</p>
-<blockquote><p>Dealing with sequence length is tricky for long documents</p>
+<p>so my warm-up task this week was to simply merge the two in a single notebook and fine-tune <code>bert-base-uncased</code> on SQuAD v1.</p>
+<p>I implemented a <em>very</em> scrappy version that achieves this in my <code>transformerlab</code> repository, and the main lesson I learnt is that</p>
+<blockquote><p>Dealing with context size is tricky for long documents</p>
 </blockquote>
-<p>Transformer models can only process a finite number of input tokens, a property usually referred to as the maximum sequence length. As described in Sylvain's tutorial, naive truncation of documents for question answering is problematic because</p>
+<p>Transformer models can only process a finite number of input tokens, a property usually referred to as the maximum context size. As described in Sylvain's tutorial, naive truncation of documents for question answering is problematic because</p>
 <blockquote><p>removing part of the the context might result in losing the answer we are looking for.</p>
 </blockquote>
-<p>The solution is to apply a <em>sliding window</em>{% fn 2 %} to the input context, so that long contexts end up producing <em>multiple</em> features. An example from the tutorial shows how this works by introducing two new hyperparameters <code>max_length</code> and <code>doc_stride</code> that control the degree of overlap (bold shows the overlapping region):</p>
+<p>The solution is to apply a <em>sliding window</em>{% fn 3 %} to the input context, so that long contexts are split into <em>multiple</em> features. An example from the tutorial shows how this works by introducing two new hyperparameters <code>max_length</code> and <code>doc_stride</code> that control the degree of overlap (bold shows the overlapping region):</p>
 
 </div>
 </div>
@@ -73,8 +76,34 @@ layout: notebook
     <span class="n">return_offsets_mapping</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">stride</span><span class="o">=</span><span class="n">doc_stride</span><span class="p">)</span>
 </pre></div>
-<p>One drawback from this approach is that it introduces significant complexity into the data preparation step; with multiple features per example, one needs to do some heavy wrangling to pick out the start and end positions of each answer.</p>
-<p>Since my book chapter is primarily about compression methods, I may opt for the simpler, but less rigourous approach of  truncating the long examples (as done in the <code>transformer</code> <a href="https://huggingface.co/transformers/custom_datasets.html#question-answering-with-squad-2-0">docs</a>). An alternative would be to adopt the "retriever-reader" architecture that I used in my PoC (where I split long documents into smaller paragraphs), but that introduces new concepts and its own complexity that will likely be distracting for the reader.</p>
+<p>One drawback from this approach is that it introduces significant complexity into the data preparation step:</p>
+<ul>
+<li>With multiple features per example, one needs to do some heavy wrangling to pick out the start and end positions of each answer. For example, the <code>postprocess_qa_predictions</code> function in Sylvain's tutorial is about 80 lines long, and breaking this down for readers is likely to distract from the main focus on compression methods.</li>
+<li>We need slightly different logic for preprocessing the training and validation sets (see the <code>prepare_train_features</code> and <code>prepare_validation_features</code>)</li>
+</ul>
+<p>Instead, I may opt for the simpler, but less rigourous approach of truncating the long examples. As shown in the <code>transformer</code> <a href="https://huggingface.co/transformers/custom_datasets.html#question-answering-with-squad-2-0">docs</a>), we'd only need to define a custom dataset</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="k">class</span> <span class="nc">SquadDataset</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encodings</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encodings</span> <span class="o">=</span> <span class="n">encodings</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">encodings</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encodings</span><span class="o">.</span><span class="n">input_ids</span><span class="p">)</span>
+</pre></div>
+<p>and then pass the encoding for the training and validation sets as follows:</p>
+<div class="highlight"><pre><span></span><span class="n">train_encodings</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">train_contexts</span><span class="p">,</span> <span class="n">train_questions</span><span class="p">,</span> <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">val_encodings</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">val_contexts</span><span class="p">,</span> <span class="n">val_questions</span><span class="p">,</span> <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">train_dataset</span> <span class="o">=</span> <span class="n">SquadDataset</span><span class="p">(</span><span class="n">train_encodings</span><span class="p">)</span>
+<span class="n">val_dataset</span> <span class="o">=</span> <span class="n">SquadDataset</span><span class="p">(</span><span class="n">val_encodings</span><span class="p">)</span>
+</pre></div>
+<p>From here we can just use the native <code>Trainer</code> in <code>transformers</code>, together with the <code>squad</code> metric from <code>datasets</code>. By looking at the distribution of question and context lengths, we can see that this simplification will only fail in a very small number of examples:</p>
+<p><img src="/blog/images/copied_from_nb/my_icons/squad-lengths.png" alt=""></p>
+<p>Another alternative would be to adopt the "retriever-reader" architecture that I used in my PoC (where I split long documents into smaller paragraphs), but that introduces it's own set of complexity that I'd like to avoid.</p>
 
 </div>
 </div>
@@ -97,8 +126,8 @@ layout: notebook
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>and the experience taught me a few lessons:</p>
 <ul>
-<li>There's a significant difference between being a power-user of a library like <code>transformers</code> versus deeply knowing how every layer, activation function, etc in a deep neural architecture is put together. Running the interview reminded me that I should aim to block time per week to hone the foundations of my machine learning knowledge.</li>
-<li>Open-ended coding interviews like this are way more fun to conduct than the usual LeetCode / HackerRank problems one usually encounters in tech. To me, they resemble a pair-programming interaction that gives the interviewer a pretty good feel for what it would be like to work closely with the candidate. Something to remember the next time I'm interviewing people for a real job!</li>
+<li>There's a significant difference between being a power-user of a library like <code>transformers</code> versus deeply knowing how every layer, activation function, etc in a deep neural architecture is put together. Running the interview reminded me that I should aim to block some time per week to hone the foundations of my machine learning knowledge.</li>
+<li>Open-ended coding interviews like this are way more fun to conduct than the usual LeetCode / HackerRank problems one usually encounters in industry. To me, they resemble a pair-programming interaction that gives the interviewer a pretty good feel for what it would be like to work closely with the candidate. Something to remember the next time I'm interviewing people for a real job!</li>
 </ul>
 
 </div>
@@ -106,7 +135,7 @@ layout: notebook
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Papers-this-week">Papers this week<a class="anchor-link" href="#Papers-this-week"> </a></h2><p>This week I've been mostly reading papers on distilling Transformers and how to improve few-shot learning <em>without</em> resorting to massive scaling:</p>
+<h2 id="Papers-this-week">Papers this week<a class="anchor-link" href="#Papers-this-week"> </a></h2><p>This week I've been mostly reading papers on compressing Transformers and how to improve few-shot learning <em>without</em> resorting to massive scaling:</p>
 <ul>
 <li><a href="https://arxiv.org/abs/1910.01108"><em>DistilBERT, a distilled version of BERT: smaller, faster, cheaper and lighter</em></a> by Victor Sanh, Lysandre Debut, Julien Chaumond, and Thomas Wolf (2019)</li>
 <li><a href="https://arxiv.org/abs/2010.13382"><em>FastFormers: Highly Efficient Transformer Models for Natural Language Understanding</em></a> by Young Jin Kim and Hany Hassan Awadalla (2020)</li>
@@ -135,8 +164,9 @@ layout: notebook
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>{{ 'Even down to the level of reviewing his own <a href="https://github.com/simonw/datasette/pull/1117">pull requests</a>!' | fndetail: 1 }}</p>
-<p>{{ 'We want a <em>sliding</em> window instead of a <em>tumbling</em> one because the answer might appear across the boundary of the two windows.' | fndetail: 2 }}</p>
+<p>{{ 'Mostly due to playing an insane game of "data science catch-up" at an early-stage startup.' | fndetail: 1 }}</p>
+<p>{{ 'Even down to the level of reviewing his own <a href="https://github.com/simonw/datasette/pull/1117">pull requests</a>!' | fndetail: 2 }}</p>
+<p>{{ 'We want a <em>sliding</em> window instead of a <em>tumbling</em> one because the answer might appear across the boundary of the two windows.' | fndetail: 3 }}</p>
 
 </div>
 </div>
