@@ -3,7 +3,7 @@ keywords: fastai
 description: A text classification example with 🤗  Transformers and Datasets
 title: Using data collators for training and error analysis
 comments: false
-categories: [til,nlp,huggingface,transformers,datasets]
+categories: [til,nlp,huggingface,transformers]
 badges: true
 hide_github_badge: true
 hide_binder_badge: true
