@@ -16,9 +16,9 @@ layout: notebook
 -->
 
 <div class="container" id="notebook-container">
-        
+
     {% raw %}
-    
+
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
@@ -50,7 +50,7 @@ layout: notebook
 </div>
 </div>
     {% raw %}
-    
+
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -78,7 +78,7 @@ Trainer<span class="ansi-blue-fg">.</span>_remove_unused_columns<span class="ans
     description<span class="ansi-blue-fg">:</span>Union<span class="ansi-blue-fg">[</span>str<span class="ansi-blue-fg">,</span> NoneType<span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">=</span><span class="ansi-green-fg">None</span><span class="ansi-blue-fg">,</span>
 <span class="ansi-blue-fg">)</span>
 <span class="ansi-red-fg">Docstring:</span> &lt;no docstring&gt;
-<span class="ansi-red-fg">Source:</span>   
+<span class="ansi-red-fg">Source:</span>
     <span class="ansi-green-fg">def</span> _remove_unused_columns<span class="ansi-blue-fg">(</span>self<span class="ansi-blue-fg">,</span> dataset<span class="ansi-blue-fg">:</span> <span class="ansi-blue-fg">&#34;datasets.Dataset&#34;</span><span class="ansi-blue-fg">,</span> description<span class="ansi-blue-fg">:</span> Optional<span class="ansi-blue-fg">[</span>str<span class="ansi-blue-fg">]</span> <span class="ansi-blue-fg">=</span> <span class="ansi-green-fg">None</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
         <span class="ansi-green-fg">if</span> <span class="ansi-green-fg">not</span> self<span class="ansi-blue-fg">.</span>args<span class="ansi-blue-fg">.</span>remove_unused_columns<span class="ansi-blue-fg">:</span>
             <span class="ansi-green-fg">return</span>
@@ -128,7 +128,7 @@ Trainer<span class="ansi-blue-fg">.</span>_remove_unused_columns<span class="ans
 </div>
 </div>
     {% raw %}
-    
+
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -174,7 +174,7 @@ Trainer<span class="ansi-blue-fg">.</span>_remove_unused_columns<span class="ans
 </div>
 </div>
     {% raw %}
-    
+
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -217,7 +217,7 @@ Trainer<span class="ansi-blue-fg">.</span>_remove_unused_columns<span class="ans
 </div>
 </div>
     {% raw %}
-    
+
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -251,13 +251,13 @@ Trainer<span class="ansi-blue-fg">.</span>_remove_unused_columns<span class="ans
 </div>
 </div>
     {% raw %}
-    
+
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">tokenize_and_encode</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span> 
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">tokenize_and_encode</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="s1">&#39;sentence&#39;</span><span class="p">],</span> <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="n">cola_enc</span> <span class="o">=</span> <span class="n">cola</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">tokenize_and_encode</span><span class="p">,</span> <span class="n">batched</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -298,7 +298,7 @@ Trainer<span class="ansi-blue-fg">.</span>_remove_unused_columns<span class="ans
 </div>
 </div>
     {% raw %}
-    
+
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -347,7 +347,7 @@ Trainer<span class="ansi-blue-fg">.</span>_remove_unused_columns<span class="ans
                 background-size: auto;
             }
         </style>
-      
+
       <progress value='63' max='63' style='width:300px; height:20px; vertical-align: middle;'></progress>
       [63/63 00:03, Epoch 1/1]
     </div>
@@ -365,14 +365,6 @@ Trainer<span class="ansi-blue-fg">.</span>_remove_unused_columns<span class="ans
     </tr>
   </tbody>
 </table><p>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
     {% endraw %}
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
@@ -383,7 +375,7 @@ Trainer<span class="ansi-blue-fg">.</span>_remove_unused_columns<span class="ans
 </div>
 </div>
     {% raw %}
-    
+
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -443,7 +435,7 @@ Trainer<span class="ansi-blue-fg">.</span>_remove_unused_columns<span class="ans
 </div>
 </div>
     {% raw %}
-    
+
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -487,7 +479,7 @@ Trainer<span class="ansi-blue-fg">.</span>_remove_unused_columns<span class="ans
 </div>
 </div>
     {% raw %}
-    
+
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -549,6 +541,5 @@ Trainer<span class="ansi-blue-fg">.</span>_remove_unused_columns<span class="ans
 </div>
 </div>
 </div>
-</div>
- 
+
 
