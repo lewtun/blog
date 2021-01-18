@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Weeknotes: Distilling distilled transformers | Lewis Tunstall’s Blog</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Weeknotes: Distilling distilled transformers" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Posts on machine learning, physics, and topology at irregularly spaced intervals." />
+<meta property="og:description" content="Posts on machine learning, physics, and topology at irregularly spaced intervals." />
+<link rel="canonical" href="https://lewtun.github.io/blog/weeknotes/nlp/huggingface/transformers/2021/01/17/wknotes-distillation-and-generation.html" />
+<meta property="og:url" content="https://lewtun.github.io/blog/weeknotes/nlp/huggingface/transformers/2021/01/17/wknotes-distillation-and-generation.html" />
+<meta property="og:site_name" content="Lewis Tunstall’s Blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-01-17T00:00:00-06:00" />
+<script type="application/ld+json">
+{"url":"https://lewtun.github.io/blog/weeknotes/nlp/huggingface/transformers/2021/01/17/wknotes-distillation-and-generation.html","@type":"BlogPosting","headline":"Weeknotes: Distilling distilled transformers","dateModified":"2021-01-17T00:00:00-06:00","datePublished":"2021-01-17T00:00:00-06:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://lewtun.github.io/blog/weeknotes/nlp/huggingface/transformers/2021/01/17/wknotes-distillation-and-generation.html"},"description":"Posts on machine learning, physics, and topology at irregularly spaced intervals.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/blog/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://lewtun.github.io/blog/feed.xml" title="Lewis Tunstall's Blog" /><link rel="shortcut icon" type="image/x-icon" href="/blog/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/blog/">Lewis Tunstall&#39;s Blog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/blog/about/">About Me</a><a class="page-link" href="/blog/search/">Search</a><a class="page-link" href="/blog/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Weeknotes: Distilling distilled transformers</h1><p class="post-meta post-meta-title"><time class="dt-published" datetime="2021-01-17T00:00:00-06:00" itemprop="datePublished">
+        Jan 17, 2021
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      4 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/blog/categories/#weeknotes">weeknotes</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/blog/categories/#nlp">nlp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/blog/categories/#huggingface">huggingface</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/blog/categories/#transformers">transformers</a>
+        
+      
+      </p>
+    
+
+    
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2021-01-17-wknotes-distillation-and-generation.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This week I mostly worked on getting my knowledge distillation code up and running, doing some pair-programming with <a href="https://twitter.com/lvwerra">Leandro von Werra</a> to re-implement Google's <a href="https://arxiv.org/abs/1904.12848"><em>Unsupervised Data Augmentation for Consistency Training</em></a>, and reviewing a book chapter on decoding strategies for text generation.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="$(\mathrm{DistilBERT})^2$">$(\mathrm{DistilBERT})^2$<a class="anchor-link" href="#$(\mathrm{DistilBERT})^2$"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>I extended my question answering <a href="https://github.com/lewtun/transformerlab/tree/master">analysis</a> with <code>transformers</code> to implement a proof-of-concept for <em>task-specific</em> knowledge distillation.<sup id="fnref-1" class="footnote-ref"><a href="#fn-1">1</a></sup> Unlike <em>task-agnostic</em> distillation where the transfer of knowledge from teacher to student is done during <em>pretraining</em>, the task-specific approach involves using a teacher to augment the cross-entropy loss of the student during <em>finetuning</em>:</p>
+<p>
+$${\cal L}(\mathbf{x}|T) = - \sum_i \bar{y}_i\log y_i(\mathbf{x}|T) -T^2 \sum_i \hat{y}_i(\mathbf{x}|T)\log y_i(\mathbf{x}|T)$$
+</p>
+<p>Here $T$ is the temperature, $\hat{y}$ are the outputs from the model, $\bar{y}$ the ground-truth labels, and $y_i$ a softmax with temperature.</p>
+<p>This neat idea comes from the <a href="https://arxiv.org/pdf/1910.01108.pdf">DistilBERT paper</a>, where the authors found that including a "second step of distillation" produced a student that performed better than simply finetuning the distilled language model:</p>
+<blockquote><p>We also studied whether we could add another step of distillation during the adaptation phase by fine-tuning DistilBERT on SQuAD using a BERT model previously fine-tuned on SQuAD as a teacher for an additional term in the loss (knowledge distillation). In this setting, there are thus two successive steps of distillation, one during the pre-training phase and one during the adaptation phase. In this case, we were able to reach interesting performances given the size of the model:79.8 F1 and 70.4 EM, i.e. within 3 points of the full model.</p>
+</blockquote>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A comparison of the two approaches is shown in the figure below:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><figure>
+  
+    <img class="docimage" src="/blog/images/copied_from_nb/my_icons/distillation.png" alt="distillation" />
+    
+    
+      <figcaption>Task-specific distillation (left) versus task-agnostic distillation (right). Figure from FastFormers by Y. Kim and H. Awadalla [arXiv:2010.13382].</figcaption>
+    
+</figure>
+</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>I find this idea to be quite appealing for deploying Transformers in production environments as we get the benefits of speed from using a distilled language model, yet largely preserve the performance of the teacher.</p>
+<p>So my task this week was to reproduce the SQuAD v1.1 results from Table 2 of the DistilBERT paper. To do this I integrated <a href="https://twitter.com/GuggerSylvain?s=20">Sylvain Gugger's</a> question answering material (see <a href="https://lewtun.github.io/blog/weeknotes/nlp/huggingface/transformers/2021/01/10/wknotes-question-answering.html">last weeknotes</a>) together with <a href="https://twitter.com/SanhEstPasMoi?s=20">Victor Sanh's</a> <a href="`https://github.com/huggingface/transformers/tree/master/examples/research_projects/distillation`">implementation</a> of knowledge distillation.<sup id="fnref-2" class="footnote-ref"><a href="#fn-2">2</a></sup></p>
+<p>The main bit of work was to create a <code>Trainer</code> class that could:</p>
+<ul>
+<li>handle two models at once, i.e. for the teacher and student</li>
+<li>run evaluation during training to get feedback on the distillation process</li>
+</ul>
+<p>The solution I ended up with involved subclassing the <code>QuestionAnsweringTrainer</code> I had previously adapted from Sylvain and simply overriding the <code>compute_loss</code> function:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DistillationTrainer</span><span class="p">(</span><span class="n">QuestionAnsweringTrainer</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">teacher_model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">teacher</span> <span class="o">=</span> <span class="n">teacher_model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">teacher</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+        <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">compute_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">inputs</span><span class="p">):</span>
+        <span class="n">inputs_stu</span> <span class="o">=</span> <span class="p">{</span><span class="o">...</span><span class="p">}</span>
+        <span class="n">outputs_stu</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="o">**</span><span class="n">inputs_stu</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">outputs_stu</span><span class="o">.</span><span class="n">loss</span>
+        <span class="n">start_logits_stu</span> <span class="o">=</span> <span class="n">outputs_stu</span><span class="o">.</span><span class="n">start_logits</span>
+        <span class="n">end_logits_stu</span> <span class="o">=</span> <span class="n">outputs_stu</span><span class="o">.</span><span class="n">end_logits</span>
+
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="n">outputs_tea</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">teacher</span><span class="p">(</span><span class="o">**</span><span class="n">inputs</span><span class="p">)</span>
+            <span class="n">start_logits_tea</span> <span class="o">=</span> <span class="n">outputs_tea</span><span class="o">.</span><span class="n">start_logits</span>
+            <span class="n">end_logits_tea</span> <span class="o">=</span> <span class="n">outputs_tea</span><span class="o">.</span><span class="n">end_logits</span>
+
+        <span class="n">loss_fct</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">KLDivLoss</span><span class="p">(</span><span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;batchmean&quot;</span><span class="p">)</span>
+        <span class="n">loss_start</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">loss_fct</span><span class="p">(</span>
+                <span class="n">F</span><span class="o">.</span><span class="n">log_softmax</span><span class="p">(</span><span class="n">start_logits_stu</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
+                <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">start_logits_tea</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
+            <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">temperature</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">loss_end</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">loss_fct</span><span class="p">(</span>
+                <span class="n">F</span><span class="o">.</span><span class="n">log_softmax</span><span class="p">(</span><span class="n">end_logits_stu</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
+                <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">end_logits_tea</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
+            <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">temperature</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">loss_ce</span> <span class="o">=</span> <span class="p">(</span><span class="n">loss_start</span> <span class="o">+</span> <span class="n">loss_end</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">alpha_ce</span> <span class="o">*</span> <span class="n">loss_ce</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">alpha_squad</span> <span class="o">*</span> <span class="n">loss</span>
+        <span class="k">return</span> <span class="n">loss</span>
+</pre></div>
+<p>By using DistilBERT-base as the student and BERT-base fine-tuned on SQuAD v1.1 as the teacher, I was able to get within spitting distance of the published results (Exact Match/F1 = 79.1/86.9), with the differences likely due to the choice of hyperparameters:</p>
+<p><figure>
+  
+    <img class="docimage" src="/blog/images/copied_from_nb/my_icons/distillation-results.png" alt="distillation" style="max-width: 500px" />
+    
+    
+      <figcaption>Evaluation metrics on SQuAD v1.1 for task-specific distillation</figcaption>
+    
+</figure>
+</p>
+<p>Overall, I'm pretty happy with how this turned out and am starting to appreciate the power of the "trainer paradigm", where one can abstract away tons of boilerplate (and error-prone) code for the training loop, evaluation, prediction etc and just focus on overriding the parts you need. I'm looking forward to pushing this analysis one step further with pruning and quantization - that's on the menu for next week!</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Papers-this-week">Papers this week<a class="anchor-link" href="#Papers-this-week"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This week I've been reading up on OpenAI's GPT papers to better understand how decoding methods for text generation work with conditional language models:</p>
+<ul>
+<li><a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf"><em>Language Models are Unsupervised Multitask Learners</em></a> by Alec Radford, Jeffrey Wu, Rewon Child, David Luan, Dario Amodei, Ilya Sutskever (2019)</li>
+<li><a href="https://arxiv.org/abs/2005.14165"><em>Language Models are Few-Shot Learners</em></a> by Tom B. Brown et al. (2020)</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="TIL-this-week">TIL this week<a class="anchor-link" href="#TIL-this-week"> </a></h2><ul>
+<li><a href="https://lewtun.github.io/blog/til/nlp/huggingface/transformers/2021/01/15/til-recovering-hidden-trainer-columns.html">Recovering columns hidden by the 🤗 Trainer</a></li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><div class="footnotes"><p id="fn-1">1. As far as I know, this term was coined in the <a href="https://arxiv.org/abs/2010.13382"><em>FastFormers: Highly Efficient Transformer Models for Natural Language Understanding</em></a> paper by Y. Kim and H. Awadalla in their<a href="#fnref-1" class="footnote footnotes">↩</a></p></div></p>
+<p><div class="footnotes"><p id="fn-2">2. Thanks to <a href="https://twitter.com/Thom_Wolf?s=20">Thomas Wolf</a> for pointing me to this resource.<a href="#fnref-2" class="footnote footnotes">↩</a></p></div></p>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><a class="u-url" href="/blog/weeknotes/nlp/huggingface/transformers/2021/01/17/wknotes-distillation-and-generation.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/blog/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/blog/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>Posts on machine learning, physics, and topology at irregularly spaced intervals.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/lewtun" title="lewtun"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/_lewtun" title="_lewtun"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
