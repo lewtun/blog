@@ -1,6 +1,6 @@
 ---
 keywords: fastai
-title: "Weeknotes: Prune-tuning transformers, universal data augmentation"
+title: "Weeknotes: Fine-pruning transformers, universal data augmentation"
 comments: false
 categories: [weeknotes,nlp,huggingface,transformers,compression,few-shot]
 badges: false
@@ -50,7 +50,7 @@ From these scores we can then define a <em>mask</em> ${\bf M} \in \{0,1\}^{n\tim
 $$ a_i = W_{ik}M_{ik}x_k \,.$$
 {% endraw %}</p>
 <p>For example, magnitude pruning calculates the scores according to the magnitude of the weights ${\bf S} = \left(\mid W_{ij} \mid\right)_{1\leq j, j\leq n}$ and then the masks are derived from ${\bf M} = \mathrm{Top}_v({\bf S})$.</p>
-<p>The key novelty with magnitude pruning is that both the weights <em>and</em> the scores are <em>learned</em> during fine-tuning. This implies that in the backward pass, we also track the gradient of the loss ${\cal L}$ with respect to $S_{ij}$:{% fn 2 %}</p>
+<p>The key novelty with movement pruning is that both the weights <em>and</em> the scores are <em>learned</em> during fine-tuning. This implies that in the backward pass, we also track the gradient of the loss ${\cal L}$ with respect to $S_{ij}$:{% fn 2 %}</p>
 <p>{% raw %}
 $$ \frac{\partial{\cal L}}{\partial S_{ij}} = \frac{\partial {\cal L}}{\partial a_i}\frac{\partial a_i}{\partial S_{ij}} = \frac{\partial {\cal L}}{\partial a_i}W_{ij}x_j$$
 {% endraw %}</p>
@@ -129,11 +129,11 @@ $$ S_{ij}^{(T)} = -\alpha_S \sum_{t&lt;T} \left( \frac{\partial {\cal L}}{\parti
 </pre></div>
 <p>So far, so good ... but what I had not appreciated is that one needs <em>special</em> model classes to deal with sparse matrices! In Victor's implementation, this requires a wholescale rewrite of the BERT classes to replace all the <code>torch.nn.Linear</code> layers with a custom <code>MaskedLinear</code> layer and additional parameters to calculate the adaptive mask in the forward pass.</p>
 <p>Although there is <a href="https://discuss.huggingface.co/t/hugging-face-reads-01-2021-sparsity-and-pruning/3144/4?u=lewtun">no plan</a> to include these masked versions of BERT into the main <code>transformers</code> library, <a href="https://twitter.com/madlag?s=20">François Lagunas</a> at HuggingFace pointed me to work he's done on making <a href="https://github.com/huggingface/pytorch_block_sparse">sparse matrices efficient in PyTorch</a>.</p>
-<p>In any case, I went ahead with Victor's masked models and ran a first set of experiments using 10% of the SQuAD data. To warmup, I used Victor's scripts as a benchmark and observed some peculiar features of prune-tuning: the metrics are flat for half the training before suddenly shooting up! Similarly, the loss gets <em>worse</em> before getting better. This is somewhat surprising, since fine-tuning usually gets most of the performance in the first 1-2 epochs of training before plateauing.</p>
+<p>In any case, I went ahead with Victor's masked models and ran a first set of experiments using 10% of the SQuAD data. To warmup, I used Victor's scripts as a benchmark and observed some peculiar features of fine-pruning: the metrics are flat for half the training before suddenly shooting up! Similarly, the loss gets <em>worse</em> before getting better. This is somewhat surprising, since fine-tuning usually gets most of the performance in the first 1-2 epochs of training before plateauing.</p>
 <p><img src="/blog/images/copied_from_nb/my_icons/pruning-scores.png" alt=""></p>
 <p>So far I have not been able to reproduce these results in my implementation, with my model failing to recover from the charactersitic dip in performance during training:</p>
 <p><img src="/blog/images/copied_from_nb/my_icons/pruning-scores-fail.png" alt=""></p>
-<p>So my focus for next week is to figure out what's going wrong and gradually scale-out to prune-tuning on the full SQuAD dataset!</p>
+<p>So my focus for next week is to figure out what's going wrong and gradually scale-out to fine-pruning on the full SQuAD dataset!</p>
 
 </div>
 </div>
@@ -153,7 +153,7 @@ $$ S_{ij}^{(T)} = -\alpha_S \sum_{t&lt;T} \left( \frac{\partial {\cal L}}{\parti
 <p>There was just one hitch: the Google implementation is in <a href="https://github.com/google-research/uda/issues/8">Python2</a> and Tensorflow v1 🤮</p>
 <p><img src="/blog/images/copied_from_nb/my_icons/uda-python.png" alt=""></p>
 <p>Being allergic to both, we decided to see if we could reproduce the results from an open-source port to PyTorch. In hindsight, this turned out to be a foolish decision because now we were debugging against 3 frameworks! It was also a humbling lesson in not believing what is reported in some random repo you find on the internet 😉.</p>
-<p>So in the end, I bite the bullet and decided to run Google's implementation which unsurprisingly worked out of the box.{% fn 3 %} With just 10k steps and a few hours of training on a single GPU, UDA can indeed achieve &gt; 90% accuracy on IMBD:</p>
+<p>So in the end, I bit the bullet and decided to run Google's implementation which unsurprisingly worked out of the box.{% fn 3 %} With just 10k steps and a few hours of training on a single GPU, UDA can indeed achieve &gt; 90% accuracy on IMBD:</p>
 
 <pre><code>=== step 500 ===
 INFO:tensorflow:  eval_classify_loss = 0.3957828
